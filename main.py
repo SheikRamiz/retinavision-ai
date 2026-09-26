@@ -1,5 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from PIL import Image
 import io
 import math
@@ -13,6 +15,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files (CSS, JS, images, etc.) from the frontend directory
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+# Serve your clinical frontend dashboard at the root URL
+@app.get("/")
+async def serve_frontend():
+    return FileResponse("frontend/index.html")
 
 STAGE_RULES = {
     0: {
