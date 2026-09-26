@@ -91,6 +91,14 @@ async def predict_retinopathy(file: UploadFile = File(...)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+from fastapi.staticfiles import StaticFiles
+import os
+
+# Serve frontend static files if the dist directory exists
+frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
+if os.path.exists(frontend_dist):
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
