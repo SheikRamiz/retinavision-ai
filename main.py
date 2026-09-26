@@ -16,13 +16,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files (CSS, JS, images, etc.) from the frontend directory
-app.mount("/static", StaticFiles(directory="frontend"), name="static")
+# Mount the compiled Vite assets
+app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
 
-# Serve your clinical frontend dashboard at the root URL
+# Serve the compiled index.html at the root URL
 @app.get("/")
 async def serve_frontend():
-    return FileResponse("frontend/index.html")
+    return FileResponse("frontend/dist/index.html")
 
 STAGE_RULES = {
     0: {
