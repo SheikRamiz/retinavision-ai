@@ -16,14 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount the compiled Vite assets
-app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
-
-# Serve the compiled index.html at the root URL
-@app.get("/")
-async def serve_frontend():
-    return FileResponse("frontend/dist/index.html")
-
 STAGE_RULES = {
     0: {
         "stage": 0, 
@@ -95,6 +87,10 @@ async def predict_retinopathy(file: UploadFile = File(...)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# Mount the compiled Vite frontend build directory at the root 
+# (API routes defined above take priority, fallback serves the SPA and static assets)
+app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
